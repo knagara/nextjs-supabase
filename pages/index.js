@@ -1,8 +1,22 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
 
-export default function Home() {
+import supabase from "../utils/supabase";
+
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+
+export async function getServerSideProps() {
+  let { data: testDatas, error } = await supabase.from("test").select("*");
+  console.log(testDatas);
+  return { props: { testDatas } };
+}
+
+export default function Home({ testDatas }) {
+  // const session = useSession();
+  // const supabase = useSupabaseClient();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -16,8 +30,16 @@ export default function Home() {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
+        <ul>
+          {testDatas.map((testData) => (
+            <li key={testData.id}>
+              <p>{testData.text}</p>
+            </li>
+          ))}
+        </ul>
+
         <p className={styles.description}>
-          Get started by editing{' '}
+          Get started by editing{" "}
           <code className={styles.code}>pages/index.js</code>
         </p>
 
@@ -60,12 +82,31 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
+  );
 }
+
+// const Home = () => {
+
+//   return (
+//     <div className="container" style={{ padding: "50px 0 100px 0" }}>
+//       {!session ? (
+//         <Auth
+//           supabaseClient={supabase}
+//           appearance={{ theme: ThemeSupa }}
+//           theme="dark"
+//         />
+//       ) : (
+//         <p>Account page will go here.</p>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Home;
